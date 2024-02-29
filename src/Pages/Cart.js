@@ -38,7 +38,7 @@ export default function Cart() {
 
       <div>
         {/* CART */}
-        <div className="mt-2 space-y-2 w-1/2  overflow-y-auto max-h-[calc(84vh-100px)] border-2 border-gray-200 rounded-lg">
+        <div className="mt-2 space-y-2 grid grid-cols-1 md:grid-cols-2  overflow-y-auto max-h-[calc(84vh-100px)] border-2 border-gray-200 rounded-lg">
           {cart.map((item, index) => (
             <div key={index} className="flex bg-white  h-56 space-x-3 pt-6 p-4 border rounded-lg shadow-md ml-1 ">
               <div><img src={item.thumbnail} alt={item.title} className="w-full h-48 object-cover mb-2 rounded-lg pb-2" /></div>
