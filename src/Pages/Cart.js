@@ -1,66 +1,66 @@
 import React, { useEffect, useState } from 'react';
 
 export default function Cart() {
-
   const [cart, setCart] = useState([]);
 
   useEffect(() => {
-    const Cart = JSON.parse(localStorage.getItem('cart')) || [];
-    setCart(Cart);
+    const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
+    setCart(storedCart);
   }, []);
 
-  const Deletpro = (i) => {
+  const deleteProduct = (index) => {
     const updatedCart = [...cart];
-    updatedCart.splice(i, 1);
+    updatedCart.splice(index, 1);
     setCart(updatedCart);
     localStorage.setItem('cart', JSON.stringify(updatedCart));
   };
 
-  const Deletallcart = () => {
+  const clearCart = () => {
     setCart([]);
     localStorage.removeItem('cart');
   };
 
-  const Totalprcart = () => {
-    return cart.reduce((total, AllproCart) => total + AllproCart.price, 0).toFixed(2);
+  const totalPrice = () => {
+    return cart.reduce((total, item) => total + item.price, 0).toFixed(2);
   };
 
   return (
-    <div className='bg-sky-50  h-screen '>
-      <h1 className="text-4xl font-bold mb-3 text-center pt-2 rounded-lg">Shopping Cart</h1>
-      {/*Totalprcart*/}
-      <div className="mt-4 flex items-center justify-center space-x-4 ">
-        <div className="text-xl font-bold">Total Price: {Totalprcart()} $</div>
-        <button onClick={Deletallcart} className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">
-          Clear Cart
-        </button>
-      </div>
-
-      <div>
-        {/* CART */}
-        <div className="mt-2 space-y-2 grid grid-cols-1 md:grid-cols-2  overflow-y-auto max-h-[calc(84vh-100px)] border-2 border-gray-200 rounded-lg">
+    <div className='bg-gray-100 min-h-screen py-8'>
+      <div className='max-w-4xl mx-auto px-4'>
+        <h1 className="text-3xl font-bold mb-6 text-center">Shopping Cart</h1>
+        {/* Total Price and Clear Cart Button */}
+        <div className="mt-8 flex items-center justify-between mb-5">
+          <div className="text-xl font-bold">Total Price: {totalPrice()} $</div>
+          <button onClick={clearCart} className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">
+            Clear Cart
+          </button>
+        </div>
+        {/* Cart Items */}
+        <div className="grid gap-4 md:grid-cols-2">
           {cart.map((item, index) => (
-            <div key={index} className="flex bg-white  h-56 space-x-3 pt-6 p-4 border rounded-lg shadow-md ml-1 ">
-              <div><img src={item.thumbnail} alt={item.title} className="w-full h-48 object-cover mb-2 rounded-lg pb-2" /></div>
-              <div>
-                <h2 className="font-bold pb-2">{item.title}</h2>
-                <p className="text-gray-700 pb-2">{item.description}</p>
-                <div className='flex justify-between items-center pb-2'>
-                  <p className="font-bold text-green-700">{item.price} $</p>
-                  <button onClick={() => Deletpro(index)} className="bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-600">
-                    Remove
-                  </button>
+            <div key={index} className="bg-white shadow-md rounded-lg overflow-hidden">
+              <div className="flex items-center justify-between p-4 border-b">
+                <div className="flex items-center space-x-4">
+                  <img src={item.thumbnail} alt={item.title} className="w-24 h-24 object-cover rounded-lg" />
+                  <div>
+                    <h2 className="text-lg font-semibold">{item.title}</h2>
+                    <p className="text-green-700 font-bold">{item.price} $</p>
+                  </div>
                 </div>
+                <button onClick={() => deleteProduct(index)} className="text-red-500 hover:text-red-600 focus:outline-none">
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
               </div>
             </div>
           ))}
         </div>
-        {/*pymntDtl*/}
-        <div>
-
+        {/* Payment Details */}
+        <div className="mt-8 p-6 bg-white shadow-md rounded-lg hidden">
+          {/* Payment details content can be added here */}
         </div>
       </div>
-
     </div>
   );
 }

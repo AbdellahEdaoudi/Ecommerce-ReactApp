@@ -8,12 +8,24 @@ import Cart from './Pages/Cart';
 import axios from 'axios';
 import { useEffect } from 'react';
 import Product from './Pages/ProductId';
+import { BsCartPlus } from 'react-icons/bs';
 
 
 export default function Header() {
   const [menu, setMenu] = useState(false);
   const [pro, setPro] = useState([]);
   const [srch, setSrch] = useState("");
+  const [cart, setCart] = useState([]);
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+        const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
+        setCart(storedCart);
+    }, 0);
+
+    return () => clearInterval(interval); 
+}, []);
+
 
   useEffect(() => {
     axios.get('https://dummyjson.com/products?limit=100')
@@ -30,7 +42,7 @@ export default function Header() {
   return (
     <div>
       {/* HEADER */}
-      <header className='sticky top-0' >
+      <header className='sticky top-0 z-50' >
         <div className='bg-gray-900  md:flex py-3  md:px-10  items-center justify-between shadow-2xl '>
           <div className='flex items-center pl-4  '>
             <img src='Image/Logo App.png' width={"60px"} /><span className=' text-3xl font-mono text-blue-800'><span className='text-blue-200'>Ed</span>Market</span>
@@ -40,10 +52,10 @@ export default function Header() {
             <ul className={`shadow-2xl absolute md:static md:w-auto w-full 
            text-blue-200 md:flex md:flex-row md:items-center  md:space-x-8   flex flex-col items-center md:space-y-0 space-y-3
             md:py-0 py-7 bg-gray-900 ${menu ? 'block' : 'hidden'}`}>
-              <li><Link onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth', }); setSrch(" ") }} to={"/Home"} className='hover:opacity-50  py-1 hover:text-blue-200 duration-200 '><i class='bx bx-home'></i> HOME</Link></li>
+              <li><Link onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth', }); setSrch(" ") }} to={"/"} className='hover:opacity-50  py-1 hover:text-blue-200 duration-200 '><i class='bx bx-home'></i> HOME</Link></li>
               <li><Link onClick={() => { setSrch(" ") }} to={"/Categ"} className='hover:opacity-50  py-1 hover:text-blue-200 duration-200'><i class='bx bxs-category-alt'></i> CATEGORIES</Link></li>
-              <li><Link to={"/Cart"} onClick={() => { setSrch(" ") }} className=' hover:opacity-50   py-1 rounded-md hover:text-blue-200 duration-200'><i class='bx bxs-cart'></i> CART</Link></li>
-              <li><Link to={"mailto:abdellahedaoudi80@gmail.com"}  onClick={() => { setSrch(" ") }} className=' hover:opacity-50  bg-slate-600 px-2 py-1 rounded-md  duration-200'><i class='bx bx-chat'></i> CONTACT</Link></li>
+              <li><Link to={"/Cart"} onClick={() => { setSrch(" ") }} className=' hover:opacity-50   py-1 rounded-md hover:text-blue-200 duration-200'><i class='bx bxs-cart'></i> CART({cart.length})</Link></li>
+              <li><Link to={"/Contact"}  onClick={() => { setSrch(" ") }} className=' hover:opacity-50  bg-slate-600 px-2 py-1 rounded-md  duration-200'><i class='bx bx-chat'></i> CONTACT</Link></li>
               <li><input type='search'
                 onChange={(e) => {
                   setSrch(e.target.value);
@@ -64,32 +76,35 @@ export default function Header() {
           </div>
 
         </div>
-        <nav className={`w-full absolute overflow-y-auto bg-sky-50   max-h-[calc(100vh-100px)] shadow-2xl grid md:grid-cols-2 ${srch.trim() !== '' ? '' : 'hidden'} `}>
-          {pro.filter((p) => {
-            return p.title.toLowerCase().includes(srch.toLowerCase());
-          }).map((pr, i) => (
-            <div key={i} className=" flex items-center   px-4 py-4 space-x-6">
-              <div className=''>
-                <Link to={`/product/${pr.id}`}><img onClick={() => { setSrch('') }} src={pr.thumbnail} alt={pr.title} className="w-full h-32 object-cover  mt-1 rounded-lg  " /></Link>
-              </div>
 
-              <div className='space-y-2'>
-                <h2 className="  font-bold  text-red-500">{pr.title}</h2>
-                <h2 className="  font-bold  text-gray-700">{pr.description}</h2>
-                <div className="flex justify-between   items-center">
-                  <p className=" font-bold text-green-700  ">{pr.price} $</p>
-                  <button
-                    onClick={() => { Addtocart(pr); window.location.href = "/Cart"; }}
-                    className="bg-sky-300 px-2 py-1 font-medium rounded-md hover:bg-green-300">
-                    <i className="bx bxs-cart"></i>&nbsp;
-                    Add to cart
-                  </button>
-                </div>
+        <nav className={`w-full absolute overflow-y-auto bg-gray-100 max-h-[calc(100vh-100px)] shadow-xl grid md:grid-cols-2 ${srch.trim() !== '' ? '' : 'hidden'}`}>
+  {pro.filter((p) => p.title.toLowerCase().includes(srch.toLowerCase()))
+    .map((pr, i) => (
+      <div key={i} className="flex items-center px-4 py-4 space-x-6 border-b border-gray-200">
+        <div className="w-32 h-32">
+          <Link to={`/product/${pr.id}`}>
+            <img
+              onClick={() => setSrch('')}
+              src={pr.thumbnail}
+              alt={pr.title}
+              className="w-full h-full object-cover rounded-lg cursor-pointer"
+            />
+          </Link>
+        </div>
+        <div className="flex-1 space-y-2">
+          <h2 className="text-xl font-bold text-red-500">{pr.title}</h2>
+          <p className="text-base text-gray-700">{pr.description}</p>
+          <div className="flex justify-between items-center">
+            <p className="font-bold text-green-700">${pr.price}</p>
+            <button onClick={() => Addtocart(pr)} className='border p-3 hover:bg-green-300 hover:text-black font-medium text-green-500 duration-200 rounded-full'>
+                <BsCartPlus />
+              </button>
+          </div>
+        </div>
+      </div>
+    ))}
+</nav>
 
-              </div>
-            </div>
-          ))}
-        </nav>
       </header>
 
 
