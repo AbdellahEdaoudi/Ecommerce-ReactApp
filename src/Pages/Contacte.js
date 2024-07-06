@@ -71,7 +71,7 @@ export default function Contact() {
           <button
             disabled={loading}
             onClick={postContact}
-            className="flex gap-2 bg-blue-400 font-medium text-white px-5 py-3 rounded-lg items-center text-[14px]"
+            className="flex gap-2 bg-blue-400 justify-center font-medium text-white px-5 py-3 rounded-lg items-center text-[14px]"
           >
             {loading ? (
               <>
